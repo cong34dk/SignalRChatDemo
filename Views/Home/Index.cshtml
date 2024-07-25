@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">SignalR Chat Demo</h1>
+    <p>Welcome to the SignalR chat application demo</p>
+
+    <div id="chat" class="mt-4">
+        <input type="text" id="userInput" placeholder="Enter your name" class="form-control mb-2" />
+        <input type="text" id="messageInput" placeholder="Enter a message" class="form-control mb-2" />
+        <button id="sendButton" class=" btn btn-primary mb-2">Send</button>
+
+        <ul id="messageList" class="list-unstyled"></ul>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+<script>
+    //Tạo kết nối tới Hub
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    //Register event nhận tin nhắn từ server
+    connection.on("ReceiveMessage", (user, message) => {
+        const li = document.createElement("li");
+        li.textContent = `${user}: ${message}`;
+        document.getElementById("messageList").appendChild(li);
+    });
+
+    //Start connect
+    connection.start().catch(err => console.error(err.toString()));
+
+    //Send message khi click nút Send
+    document.getElementById("sendButton").addEventListener("click", event => {
+        const user = document.getElementById("userInput").value;
+        const message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+        event.preventDefault();
+    });
+</script>
+

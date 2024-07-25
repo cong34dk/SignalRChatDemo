@@ -10,7 +10,7 @@
         <input type="text" id="userInput" placeholder="Enter your name" class="form-control mb-2" />
         <input type="text" id="messageInput" placeholder="Enter a message" class="form-control mb-2" />
         <input type="file" id="imageInput" class="form-control mb-2" />
-        <button id="sendButton" class=" btn btn-primary mb-2">Send</button>
+        <button id="sendButton" class="btn btn-primary mb-2">Send</button>
 
         <ul id="messageList" class="list-unstyled"></ul>
     </div>
@@ -18,12 +18,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
 <script>
-    //Tạo kết nối tới Hub
+    // Tạo kết nối tới Hub
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
         .build();
 
-    //Register event nhận tin nhắn từ server
+    // Register event nhận tin nhắn từ server
     connection.on("ReceiveMessage", (user, message, imageUrl) => {
         const li = document.createElement("li");
         if (message) {
@@ -32,37 +32,41 @@
         if (imageUrl) {
             const img = document.createElement("img");
             img.src = imageUrl;
-            img.style.maxWidth = '200px'
+            img.style.maxWidth = '200px';
             li.appendChild(img);
         }
         document.getElementById("messageList").appendChild(li);
     });
 
-    //Start connect
+    // Start connect
     connection.start().catch(err => console.error(err.toString()));
 
-    //Send message khi click nút Send
+    // Send message khi click nút Send
     document.getElementById("sendButton").addEventListener("click", async event => {
         const user = document.getElementById("userInput").value;
-        const message = document.getElementById("messageInput").value;
+        const messageInput = document.getElementById("messageInput");
+        const message = messageInput.value;
         const imageInput = document.getElementById("imageInput");
+
         if (imageInput.files.length > 0) {
             const file = imageInput.files[0];
-            const imageUrl = await uploadImage(file); //Upload image và lấy URL
-            connection.invoke("SendImage", user, imageUrl).catch(err => console.error(err.toString()));
+            const imageUrl = await uploadImage(file); // Upload image và lấy URL
+            await connection.invoke("SendImage", user, imageUrl).catch(err => console.error(err.toString()));
+            imageInput.value = ""; // Xóa nội dung chọn tệp
         } else {
-            connection.invoke("SendImage", user, message).catch(err => console.error(err.toString()));
+            await connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
         }
+
+        messageInput.value = ""; // Xóa nội dung tin nhắn sau khi gửi
         event.preventDefault();
     });
 
-    //Hàm upload hỉnh ảnh lên server
+    // Hàm upload hình ảnh lên server
     async function uploadImage(file) {
-
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("/upload", {
+        const response = await fetch("/api/upload", {
             method: "POST",
             body: formData
         });
@@ -76,4 +80,3 @@
         }
     }
 </script>
-

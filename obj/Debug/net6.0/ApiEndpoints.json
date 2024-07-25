@@ -2,7 +2,7 @@
   {
     "ContainingType": "SignalRChatDemo.Controllers.UploadController",
     "Method": "Upload",
-    "RelativePath": "upload",
+    "RelativePath": "api/Upload",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

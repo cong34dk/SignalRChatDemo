@@ -13,6 +13,38 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\321690206_492027656456906_4821353913362590314_n.jpg",
+      "PackagePath": "staticwebassets\\images\\321690206_492027656456906_4821353913362590314_n.jpg"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\iphone.webp",
+      "PackagePath": "staticwebassets\\images\\iphone.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\oppo-a58-dd-doimoi.webp",
+      "PackagePath": "staticwebassets\\images\\oppo-a58-dd-doimoi.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\oppo-reno8-t-4g-dd.webp",
+      "PackagePath": "staticwebassets\\images\\oppo-reno8-t-4g-dd.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\photo_1629016090148_1629016090266456871612.jpg",
+      "PackagePath": "staticwebassets\\images\\photo_1629016090148_1629016090266456871612.jpg"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\realme-c55-dd-doimoi.webp",
+      "PackagePath": "staticwebassets\\images\\realme-c55-dd-doimoi.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\samsung-galaxy-a34-dd.webp",
+      "PackagePath": "staticwebassets\\images\\samsung-galaxy-a34-dd.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\xiaomi-redmi-12c-dd.webp",
+      "PackagePath": "staticwebassets\\images\\xiaomi-redmi-12c-dd.webp"
+    },
+    {
       "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

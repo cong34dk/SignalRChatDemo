@@ -12,7 +12,9 @@
         <input type="file" id="imageInput" class="form-control mb-2" />
         <button id="sendButton" class="btn btn-primary mb-2">Send</button>
 
+        <div class="mt-4"></div>
         <ul id="messageList" class="list-unstyled"></ul>
+        <div id="typingIndicator" class="mt-2" style="font-style: italic; color: gray;"></div>
     </div>
 </div>
 
@@ -23,7 +25,10 @@
         .withUrl("/chatHub")
         .build();
 
-    // Register event nhận tin nhắn từ server
+    let typingTimeout;
+    const typingDelay = 1000; // Thời gian chờ để xác định người dùng ngừng nhập (1 giây)
+
+    // Register sự kiện nhận tin nhắn từ server
     connection.on("ReceiveMessage", (user, message, imageUrl) => {
         const li = document.createElement("li");
         if (message) {
@@ -38,10 +43,20 @@
         document.getElementById("messageList").appendChild(li);
     });
 
-    // Start connect
+    // Register sự kiện khi người dùng khác đang nhập
+    connection.on("UserTyping", (user) => {
+        document.getElementById("typingIndicator").textContent = `${user} is typing...`;
+    });
+
+    // Register sự kiện khi người dùng khác ngừng nhập
+    connection.on("UserStoppedTyping", (user) => {
+        document.getElementById("typingIndicator").textContent = '';
+    });
+
+    // Start kết nối
     connection.start().catch(err => console.error(err.toString()));
 
-    // Send message khi click nút Send
+    // Xử lý khi người dùng nhấn nút Send
     document.getElementById("sendButton").addEventListener("click", async event => {
         const user = document.getElementById("userInput").value;
         const messageInput = document.getElementById("messageInput");
@@ -58,7 +73,23 @@
         }
 
         messageInput.value = ""; // Xóa nội dung tin nhắn sau khi gửi
+        await connection.invoke("StopTyping", user); // Gửi sự kiện ngừng nhập
         event.preventDefault();
+    });
+
+    // Xử lý sự kiện nhập liệu của người dùng
+    document.getElementById("messageInput").addEventListener("input", async () => {
+        const user = document.getElementById("userInput").value;
+
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+
+        await connection.invoke("Typing", user).catch(err => console.error(err.toString()));
+
+        typingTimeout = setTimeout(async () => {
+            await connection.invoke("StopTyping", user).catch(err => console.error(err.toString()));
+        }, typingDelay);
     });
 
     // Hàm upload hình ảnh lên server

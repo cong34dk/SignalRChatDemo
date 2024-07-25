@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\images\\321690206_492027656456906_4821353913362590314_n.jpg"
     },
     {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\cuteImage.gif",
+      "PackagePath": "staticwebassets\\images\\cuteImage.gif"
+    },
+    {
       "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\iphone.webp",
       "PackagePath": "staticwebassets\\images\\iphone.webp"
     },
@@ -31,6 +35,14 @@
     {
       "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\photo_1629016090148_1629016090266456871612.jpg",
       "PackagePath": "staticwebassets\\images\\photo_1629016090148_1629016090266456871612.jpg"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\realme-11-4g-dd.webp",
+      "PackagePath": "staticwebassets\\images\\realme-11-4g-dd.webp"
+    },
+    {
+      "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\realme-11-pro-5g-dd.webp",
+      "PackagePath": "staticwebassets\\images\\realme-11-pro-5g-dd.webp"
     },
     {
       "Id": "D:\\congIT\\C#\\SignalRChatDemo\\wwwroot\\images\\realme-c55-dd-doimoi.webp",

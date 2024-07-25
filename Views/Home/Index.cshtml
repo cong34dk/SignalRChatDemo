@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    //Data chatHistory lấy từ database
+    var chatHistory = Model as List<ChatMessage>;
 }
 
 <div class="text-center">
@@ -12,8 +14,21 @@
         <input type="file" id="imageInput" class="form-control mb-2" />
         <button id="sendButton" class="btn btn-primary mb-2">Send</button>
 
-        <div class="mt-4"></div>
-        <ul id="messageList" class="list-unstyled"></ul>
+        <ul id="messageList" class="list-unstyled">
+            @foreach (var message in chatHistory)
+            {
+                <li>
+                    @if (!string.IsNullOrEmpty(message.Message))
+                    {
+                        <span>@message.User: @message.Message</span>
+                    }
+                    @if (!string.IsNullOrEmpty(message.ImageUrl))
+                    {
+                        <img src="@message.ImageUrl" style="max-width: 200px;" />
+                    }
+                </li>
+            }
+        </ul>
         <div id="typingIndicator" class="mt-2" style="font-style: italic; color: gray;"></div>
     </div>
 </div>
@@ -30,84 +45,111 @@
 
     // Register sự kiện nhận tin nhắn từ server
     connection.on("ReceiveMessage", (user, message, imageUrl) => {
-        const li = document.createElement("li");
-        if (message) {
-            li.textContent = `${user}: ${message}`;
+        try {
+            const li = document.createElement("li");
+            if (message) {
+                li.textContent = `${user}: ${message}`;
+            }
+            if (imageUrl) {
+                const img = document.createElement("img");
+                img.src = imageUrl;
+                img.style.maxWidth = '200px';
+                li.appendChild(img);
+            }
+            document.getElementById("messageList").appendChild(li);
+        } catch (err) {
+            console.error("Error handling received message:", err);
         }
-        if (imageUrl) {
-            const img = document.createElement("img");
-            img.src = imageUrl;
-            img.style.maxWidth = '200px';
-            li.appendChild(img);
-        }
-        document.getElementById("messageList").appendChild(li);
     });
 
     // Register sự kiện khi người dùng khác đang nhập
     connection.on("UserTyping", (user) => {
-        document.getElementById("typingIndicator").textContent = `${user} is typing...`;
+        try {
+            document.getElementById("typingIndicator").textContent = `${user} is typing...`;
+        } catch (err) {
+            console.error("Error updating typing indicator:", err);
+        }
     });
 
     // Register sự kiện khi người dùng khác ngừng nhập
     connection.on("UserStoppedTyping", (user) => {
-        document.getElementById("typingIndicator").textContent = '';
+        try {
+            document.getElementById("typingIndicator").textContent = '';
+        } catch (err) {
+            console.error("Error clearing typing indicator:", err);
+        }
     });
 
     // Start kết nối
-    connection.start().catch(err => console.error(err.toString()));
+    connection.start().catch(err => console.error("Connection failed:", err.toString()));
 
     // Xử lý khi người dùng nhấn nút Send
     document.getElementById("sendButton").addEventListener("click", async event => {
-        const user = document.getElementById("userInput").value;
-        const messageInput = document.getElementById("messageInput");
-        const message = messageInput.value;
-        const imageInput = document.getElementById("imageInput");
+        try {
+            const user = document.getElementById("userInput").value;
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value;
+            const imageInput = document.getElementById("imageInput");
 
-        if (imageInput.files.length > 0) {
-            const file = imageInput.files[0];
-            const imageUrl = await uploadImage(file); // Upload image và lấy URL
-            await connection.invoke("SendImage", user, imageUrl).catch(err => console.error(err.toString()));
-            imageInput.value = ""; // Xóa nội dung chọn tệp
-        } else {
-            await connection.invoke("SendMessage", user, message).catch(err => console.error(err.toString()));
+            if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const imageUrl = await uploadImage(file); // Upload image và lấy URL
+                await connection.invoke("SendImage", user, imageUrl);
+                imageInput.value = ""; // Xóa nội dung chọn tệp
+            } else {
+                await connection.invoke("SendMessage", user, message);
+            }
+
+            messageInput.value = ""; // Xóa nội dung tin nhắn sau khi gửi
+            await connection.invoke("StopTyping", user); // Gửi sự kiện ngừng nhập
+        } catch (err) {
+            console.error("Error sending message or image:", err.toString());
         }
 
-        messageInput.value = ""; // Xóa nội dung tin nhắn sau khi gửi
-        await connection.invoke("StopTyping", user); // Gửi sự kiện ngừng nhập
         event.preventDefault();
     });
 
     // Xử lý sự kiện nhập liệu của người dùng
     document.getElementById("messageInput").addEventListener("input", async () => {
-        const user = document.getElementById("userInput").value;
+        try {
+            const user = document.getElementById("userInput").value;
 
-        if (typingTimeout) {
-            clearTimeout(typingTimeout);
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+            }
+
+            await connection.invoke("Typing", user);
+
+            typingTimeout = setTimeout(async () => {
+                await connection.invoke("StopTyping", user);
+            }, typingDelay);
+        } catch (err) {
+            console.error("Error handling typing event:", err.toString());
         }
-
-        await connection.invoke("Typing", user).catch(err => console.error(err.toString()));
-
-        typingTimeout = setTimeout(async () => {
-            await connection.invoke("StopTyping", user).catch(err => console.error(err.toString()));
-        }, typingDelay);
     });
 
     // Hàm upload hình ảnh lên server
     async function uploadImage(file) {
-        const formData = new FormData();
-        formData.append("file", file);
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
 
-        const response = await fetch("/api/upload", {
-            method: "POST",
-            body: formData
-        });
+            const response = await fetch("/api/upload", {
+                method: "POST",
+                body: formData
+            });
 
-        if (response.ok) {
-            const data = await response.json();
-            return data.imageUrl;
-        } else {
-            console.error("Image upload failed");
+            if (response.ok) {
+                const data = await response.json();
+                return data.imageUrl;
+            } else {
+                console.error("Image upload failed with status:", response.status);
+                return "";
+            }
+        } catch (err) {
+            console.error("Error uploading image:", err.toString());
             return "";
         }
     }
 </script>
+

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SignalRChatDemo.Data;
 using SignalRChatDemo.Models;
 using System.Diagnostics;
 
@@ -6,16 +7,21 @@ namespace SignalRChatDemo.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ChatDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ChatDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var chatHistory = _context.ChatMessages
+                .OrderByDescending(m => m.Timestamp)
+                .Take(50)
+                .ToList();
+
+            return View(chatHistory);
         }
 
         public IActionResult Privacy()

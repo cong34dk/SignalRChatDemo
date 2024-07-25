@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SignalRChatDemo.Data;
 using SignalRChatDemo.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();
+
+// Configure Entity Framework and add ChatDbContext
+builder.Services.AddDbContext<ChatDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatDb")));
 
 var app = builder.Build();
 

@@ -41,3 +41,4 @@ D:\congIT\C#\SignalRChatDemo\bin\Debug\net6.0\System.Text.Json.dll
 D:\congIT\C#\SignalRChatDemo\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
 D:\congIT\C#\SignalRChatDemo\obj\Debug\net6.0\SignalRChatDemo.csproj.AssemblyReference.cache
 D:\congIT\C#\SignalRChatDemo\obj\Debug\net6.0\SignalRC.1B1A3492.Up2Date
+D:\congIT\C#\SignalRChatDemo\obj\Debug\net6.0\SignalRChatDemo.sourcelink.json
